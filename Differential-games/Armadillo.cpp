@@ -10,7 +10,7 @@ using namespace chrono;
 
 
 void Dg(cube a,cube b,cube c,cube d);
-void Estimation(cube a,cube b,cube c,cube d);
+void Estimation(cube a,cube b,cube c,cube d,colvec ξo);
 
 // Define initial values
 mat phf = {{0, 0}, {0, 0}};
@@ -34,7 +34,8 @@ double T = 0.001;
 colvec Ur(1), Uh(1), ξ={1,1}, error={0};
 
 // Declare array to store past Uh values
-colvec Uh_arr[DelE];  // Initialize with size DelE
+colvec Uh_arr[DelE];  
+colvec ξ_arr[DelE];
 
 // Create cubes with all slices the same as the original matrices
 cube A(2, 2, 15*DelP);
@@ -80,10 +81,11 @@ int main() {
     ξ+=T*(a*ξ+Br.slice(b)*Ur+Bh.slice(b)*Uh+C.slice(b));
 
     // Store Uh in the array
-    Uh_arr[i % DelE] = Uh; // Use modulo to keep index within bounds
+    Uh_arr[i % DelE] = Uh; 
+    ξ_arr[i % DelE] = ξ;
 
     if(i>=DelE){           a-=DelE;
-      Estimation(A(span::all, span::all, span(a, b)), Br(span::all, span::all, span(a, b)), Bh(span::all, span::all, span(a, b)), C(span::all, span::all, span(a, b)));
+      Estimation(A(span::all, span::all, span(a, b)), Br(span::all, span::all, span(a, b)), Bh(span::all, span::all, span(a, b)), C(span::all, span::all, span(a, b)), ξ_arr[(i+1)%DelE]);
     }    
   }
 
@@ -150,8 +152,9 @@ void Dg(cube mA,cube mBr,cube mBh ,cube mC){
 }
 
 
-void Estimation(cube mA,cube mBr,cube mBh ,cube mC ){
+void Estimation(cube mA,cube mBr,cube mBh ,cube mC, colvec ξo){
   int s;
+  ξ=ξo;
 
   for(int i=0;i<DelE;i++){
     s=i+DelP;
