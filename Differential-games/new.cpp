@@ -1,7 +1,7 @@
 #include <armadillo>
 #include <iostream>
 #include <chrono>
-#include <limits>
+#include <math.h>
 
 #include "nlopt.h"
 
@@ -157,7 +157,7 @@ void Estimation(cube a, cube b, cube c, cube d, colvec ξo) {
     // ** NLopt Integration **
     const int n_params = 2; // Assuming you want to optimize ar(0) and ah(0)
     double lower_bounds[n_params] = {0, 0};
-    double upper_bounds[n_params] = {std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity()};
+    double upper_bounds[n_params] = {HUGE_VAL,HUGE_VAL};
 
     // Perform NLopt optimization (assuming you want to optimize ar(0) and ah(0))
     nlopt_opt opt = nlopt_create(NLOPT_LN_BOBYQA, n_params);
