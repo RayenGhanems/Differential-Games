@@ -1,13 +1,12 @@
 #include <armadillo>
 #include <iostream>
 #include <chrono>
-#include <boost/circular_buffer.hpp>
 
 #include "nlopt.h"
 
 using namespace arma;
 using namespace std;
-using namespace boost;
+using namespace chrono;
 
 
 void Dg(cube a,cube b,cube c,cube d);
@@ -29,11 +28,13 @@ colvec mC = {0, 0.1};
 mat Rr = {1};
 mat Rh = {1};
 mat Rrh = {1};
-int DelP = 1000,DelE=5;
+const int DelP = 1000, DelE = 5;
 double T = 0.001;
 
-colvec Ur(1),Uh(1),ξ={1,1},error={0};
-circular_buffer<colvec> UHB(DelE);
+colvec Ur(1), Uh(1), ξ={1,1}, error={0};
+
+// Declare array to store past Uh values
+colvec Uh_arr[DelE];  // Initialize with size DelE
 
 // Create cubes with all slices the same as the original matrices
 cube A(2, 2, 15*DelP);
@@ -78,7 +79,9 @@ int main() {
     Uh=-inv(Rh)*Bh.slice(b).t()*(Ph*ξ+ah);
     ξ+=T*(a*ξ+Br.slice(b)*Ur+Bh.slice(b)*Uh+C.slice(b));
 
-    UHB.push_back(Uh);
+    // Store Uh in the array
+    Uh_arr[i % DelE] = Uh; // Use modulo to keep index within bounds
+
     if(i>=DelE){           a-=DelE;
       Estimation(A(span::all, span::all, span(a, b)), Br(span::all, span::all, span(a, b)), Bh(span::all, span::all, span(a, b)), C(span::all, span::all, span(a, b)));
     }    
@@ -90,7 +93,7 @@ int main() {
   
   auto duration = chrono::duration_cast<chrono::microseconds>(end - start);
   
-  // Print 
+    // Print 
   cout << "Pr:\n" << Pr << endl;
   cout << "ar:\n" << ar << endl;
   cout << "Ph:\n" << Ph << endl;
@@ -149,16 +152,17 @@ void Dg(cube mA,cube mBr,cube mBh ,cube mC){
 
 void Estimation(cube mA,cube mBr,cube mBh ,cube mC ){
   int s;
-  auto it = UHB.begin();
-  advance(it, 0);
-  for(int i=0;i<DelE;i++){ s=i+DelP;
+
+  for(int i=0;i<DelE;i++){
+    s=i+DelP;
     Dg(mA(span::all, span::all, span(i, s)),mBr(span::all, span::all, span(i, s)),mBh(span::all, span::all, span(i, s)),mC(span::all, span::all, span(i, s)));
     Uh=-inv(Rh)*Bh.slice(s).t()*(Ph*ξ+ah);
     ξ+=T*(i*ξ+Br.slice(s)*Ur+Bh.slice(s)*Uh+C.slice(s));
 
-    error += abs(*it-Uh);
-    it++;
-
+    // Calculate error using Uh_arr[i] (assuming element-wise absolute difference)
+    error += abs(Uh_arr[i % DelE] - Uh);  // Use modulo for index within bounds
   }
+
   cout<<error <<"\n";
 }
+
