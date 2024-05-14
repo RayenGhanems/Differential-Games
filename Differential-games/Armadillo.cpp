@@ -46,10 +46,10 @@ cube C(2, 1, 15*DelP);
 mat Brt_i,Bht_i,Brht_i,Art_i,Aht_i,crt_i,cht_i,Frt_i,Fht_i;
 
 // Pre-allocate storage for loop iterations (now matrices)
-mat Pr(2, 2);  // Initialize with same dimensions as prf
-mat Ph(2, 2);  // Initialize with same dimensions as phf
-colvec ar(2);   // Initialize with same dimensions as arf
-colvec ah(2);   // Initialize with same dimensions as ahf
+mat Pr(2, 2);  
+mat Ph(2, 2);  
+colvec ar(2);  
+colvec ah(2);   
 
 
 
@@ -163,7 +163,7 @@ void Estimation(cube mA,cube mBr,cube mBh ,cube mC, colvec ξo){
     ξ+=T*(i*ξ+Br.slice(s)*Ur+Bh.slice(s)*Uh+C.slice(s));
 
     // Calculate error using Uh_arr[i] (assuming element-wise absolute difference)
-    error += abs(Uh_arr[i % DelE] - Uh);  // Use modulo for index within bounds
+    error += abs(Uh_arr[i % DelE] - Uh);  
   }
 
   cout<<error <<"\n";
