@@ -33,7 +33,7 @@ mat Rrh = {1};
 const int DelP = 1000, DelE = 5;
 double T = 0.001;
 
-colvec Ur(1), Uh(1), ξ = {1, 1}, error = {0};
+colvec Ur(1), Uh(1), ξ = {1, 1}, error = {0},Θr = {1, 1},Θh = {1, 1};
 
 // Declare array to store past Uh values
 colvec Uh_arr[DelE];
@@ -155,7 +155,7 @@ void Estimation(cube a, cube b, cube c, cube d, colvec ξo) {
     Dg(a(span::all, span::all, span(i, s)), b(span::all, span::all, span(i, s)), c(span::all, span::all, span(i, s)), d(span::all, span::all, span(i, s)));
 
     // ** NLopt Integration **
-    const int n_params = 2; // Assuming you want to optimize ar(0) and ah(0)
+    const int n_params = 2; 
     double lower_bounds[n_params] = {0, 0};
     double upper_bounds[n_params] = {HUGE_VAL,HUGE_VAL};
 
@@ -163,10 +163,9 @@ void Estimation(cube a, cube b, cube c, cube d, colvec ξo) {
     nlopt_opt opt = nlopt_create(NLOPT_LN_BOBYQA, n_params);
     nlopt_set_lower_bounds(opt, lower_bounds);
     nlopt_set_upper_bounds(opt, upper_bounds);
-    nlopt_set_maxeval(opt, 6); // Use the specified maxeval from your parameters
+    nlopt_set_maxeval(opt, 6); 
 
-    // ** Replace with your desired initial guess for the parameters to optimize **
-    double x[n_params] = {a(0, 0, i), c(0, 0, i)};
+    double x[n_params] = {Θh,Θr};
 
     double min_f;
     nlopt_result result = nlopt_optimize(opt, x, &min_f);
@@ -176,8 +175,8 @@ void Estimation(cube a, cube b, cube c, cube d, colvec ξo) {
       cout << "NLopt optimization for step " << i << " failed!" << endl;
     } else {
       // Update parameters with optimized values
-      a(0, 0, i) = x[0];
-      c(0, 0, i) = x[1];
+      Θh= x[0];
+      Θr= x[1];
     }
 
     nlopt_destroy(opt); // Clean up NLopt object after each optimization
