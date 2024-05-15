@@ -78,7 +78,7 @@ int main() {
     // Updating Ur, Uh and ξ
     Ur=-inv(Rr)*Br.slice(b).t()*(Pr*ξ+ar);
     Uh=-inv(Rh)*Bh.slice(b).t()*(Ph*ξ+ah);
-    ξ+=T*(a*ξ+Br.slice(b)*Ur+Bh.slice(b)*Uh+C.slice(b));
+    ξ+=T*(A.slice(b)*ξ+Br.slice(b)*Ur+Bh.slice(b)*Uh+C.slice(b));
 
     // Store Uh in the array
     Uh_arr[i % DelE] = Uh; 
@@ -155,17 +155,18 @@ void Dg(cube mA,cube mBr,cube mBh ,cube mC){
 void Estimation(cube mA,cube mBr,cube mBh ,cube mC, colvec ξo){
   int s;
   ξ=ξo;
-
+  error = {0};
   for(int i=0;i<DelE;i++){
     s=i+DelP;
     Dg(mA(span::all, span::all, span(i, s)),mBr(span::all, span::all, span(i, s)),mBh(span::all, span::all, span(i, s)),mC(span::all, span::all, span(i, s)));
     Uh=-inv(Rh)*Bh.slice(s).t()*(Ph*ξ+ah);
-    ξ+=T*(i*ξ+Br.slice(s)*Ur+Bh.slice(s)*Uh+C.slice(s));
+    Ur=-inv(Rr)*Br.slice(s).t()*(Pr*ξ+ar);
+    ξ+=T*(A.slice(s)*ξ+Br.slice(s)*Ur+Bh.slice(s)*Uh+C.slice(s));
 
     // Calculate error using Uh_arr[i] (assuming element-wise absolute difference)
     error += abs(Uh_arr[i % DelE] - Uh);  
   }
 
-  cout<<error <<"\n";
+  cout<<error ;
 }
 
