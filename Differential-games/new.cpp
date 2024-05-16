@@ -155,7 +155,7 @@ void Estimation(cube a, cube b, cube c, cube d, colvec ξo) {
     Dg(a(span::all, span::all, span(i, s)), b(span::all, span::all, span(i, s)), c(span::all, span::all, span(i, s)), d(span::all, span::all, span(i, s)));
 
     // ** NLopt Integration **
-    const int n_params = 2; // Assuming you want to optimize ar(0) and ah(0)
+    const int n_params = 2;
     double lower_bounds[n_params] = {0, 0};
     double upper_bounds[n_params] = {HUGE_VAL,HUGE_VAL};
 
