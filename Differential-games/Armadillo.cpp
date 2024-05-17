@@ -45,7 +45,7 @@ cube C(2, 1, 15*DelP);
 
 mat Brt_i,Bht_i,Brht_i,Art_i,Aht_i,crt_i,cht_i,Frt_i,Fht_i;
 
-// Pre-allocate storage for loop iterations (now matrices)
+// Pre-allocate storage for loop iterations 
 mat Pr(2, 2);  
 mat Ph(2, 2);  
 colvec ar(2);  
@@ -70,7 +70,7 @@ int main() {
   int a,b;
 
   // Start clock
-  auto start = chrono::high_resolution_clock::now();
+  auto start = high_resolution_clock::now();
 
   for(int i=0;i<15;i++){   a=i*DelP;b=a+DelP-1;
     Dg(A(span::all, span::all, span(a, b)), Br(span::all, span::all, span(a, b)), Bh(span::all, span::all, span(a, b)), C(span::all, span::all, span(a, b)));
@@ -80,7 +80,7 @@ int main() {
     Uh=-inv(Rh)*Bh.slice(b).t()*(Ph*ξ+ah);
     ξ+=T*(A.slice(b)*ξ+Br.slice(b)*Ur+Bh.slice(b)*Uh+C.slice(b));
 
-    // Store Uh in the array
+    // Store Uh and ξ in the array
     Uh_arr[i % DelE] = Uh; 
     ξ_arr[i % DelE] = ξ;
 
@@ -90,10 +90,10 @@ int main() {
   }
 
   // End clock
-  auto end = chrono::high_resolution_clock::now();
+  auto end = high_resolution_clock::now();
   
   
-  auto duration = chrono::duration_cast<chrono::microseconds>(end - start);
+  auto duration = duration_cast<chrono::microseconds>(end - start);
   
     // Print 
   cout << "Pr:\n" << Pr << endl;
@@ -163,7 +163,7 @@ void Estimation(cube mA,cube mBr,cube mBh ,cube mC, colvec ξo){
     Ur=-inv(Rr)*Br.slice(s).t()*(Pr*ξ+ar);
     ξ+=T*(A.slice(s)*ξ+Br.slice(s)*Ur+Bh.slice(s)*Uh+C.slice(s));
 
-    // Calculate error using Uh_arr[i] (assuming element-wise absolute difference)
+   
     error += abs(Uh_arr[i % DelE] - Uh);  
   }
 
