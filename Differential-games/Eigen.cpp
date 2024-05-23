@@ -33,17 +33,17 @@ int main() {
     auto start = high_resolution_clock::now();
 
     for (int i=0; i<Tf; i++) {      j=2*i;b=(j+DelP*2)-1;
-        Dg(A.block(j, 0, b-j+1, 2), Br.block(j, 0, b-j+1, 1), Bh.block(j, 0, b-j+1, 1), C.block(j, 0, b-j+1, 1));
+        Dg(mA, mBr, mBh, mC);
 
         // Updating Ur, Uh, and ξ
-        Ur = -Rr.inverse() * Br.block(j, 0, 2, 1).transpose() * (Pr * ξ + ar);
-        Uh = -Rh.inverse() * Bh.block(j, 0, 2, 1).transpose() * (Ph * ξ + ah);
-        ξ += T * (A.block(j, 0, 2, 2) * ξ + Br.block(j, 0, 2, 1) * Ur + Bh.block(j, 0, 2, 1) * Uh + C.block(j, 0, 2, 1));
+        Ur = -Rr.inverse() * mBr.transpose() * (Pr * ξ + ar);
+        Uh = -Rh.inverse() * mBh.transpose() * (Ph * ξ + ah);
+        ξ += T * (mA* ξ + mBr* Ur + mBh * Uh + mC);
 
         // Store Uh and ξ in the array
-        Uh_arr[i % DelE] = Uh;
-        ξ0 = ξ_arr[i % DelE];
-        ξ_arr[i % DelE] = ξ;
+        //Uh_arr[i % DelE] = Uh;
+        //ξ0 = ξ_arr[i % DelE];
+        //ξ_arr[i % DelE] = ξ;
 
         //if (i>DelE) {     j-=(DelE/2)-2;
             //Estimation(A.block(j, 0, b-j+1, 2), Br.block(j, 0, b-j+1, 1), Bh.block(j, 0, b-j+1, 1), C.block(j, 0, b-j+1, 1), ξ0);
@@ -102,7 +102,7 @@ void Define(){
     Rrh << 1;
 }
 
-void Dg(MatrixXd dgA, MatrixXd dgBr, MatrixXd dgBh, MatrixXd dgC) {
+void Dg(MatrixXd a, MatrixXd br, MatrixXd bh, MatrixXd c) {
     // Initialize loop variables with actual values
     Pr = prf;
     Ph = phf;
@@ -111,7 +111,7 @@ void Dg(MatrixXd dgA, MatrixXd dgBr, MatrixXd dgBh, MatrixXd dgC) {
 
     // Implement the loop
     for (int i=0; i<DelP; ++i) {    d=2*i;
-        a=dgA.block(d, 0, 2, 2); br=dgBr.block(d, 0, 2, 1); bh=dgBh.block(d, 0, 2, 1); c=dgC.block(d, 0, 2, 1);
+        //a=dgA.block(d, 0, 2, 2); br=dgBr.block(d, 0, 2, 1); bh=dgBh.block(d, 0, 2, 1); c=dgC.block(d, 0, 2, 1);
 
         Brt_i = br * Rr.inverse() * br.transpose();
         Bht_i = bh * Rh.inverse() * bh.transpose();
