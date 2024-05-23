@@ -41,7 +41,7 @@ int main() {
   lb[0] = -HUGE_VAL;
   lb[1] = 0;
   opt.set_lower_bounds(lb);
-  opt.set_min_objective(myfunc, NULL); // Set user-defined objective function
+  opt.set_min_objective(myfunc, nullptr); // Set user-defined objective function
 
   // Define constraint data
   my_constraint_data data[2] = {{2, 0}, {-1, 1}};
