@@ -1,56 +1,22 @@
 #include <iostream>
-#include <chrono>
-#include <eigen3/Eigen/Dense>
+#include </opt/intel/oneapi/mkl/2024.1/include/mkl.h>
 
-using namespace std;
-using namespace Eigen;
-using namespace chrono;
+int main() {
+    const int N = 1000;
+    double *A = (double *)mkl_malloc(N * N * sizeof(double), 64);
+    double *B = (double *)mkl_malloc(N * N * sizeof(double), 64);
+    double *C = (double *)mkl_malloc(N * N * sizeof(double), 64);
 
-void Dg(MatrixXd a, MatrixXd b, MatrixXd c, MatrixXd d);
-void Estimation(MatrixXd a, MatrixXd b, MatrixXd c, MatrixXd d, VectorXd ξo);
-void Define();
+    // Initialize matrices A and B
 
-const int dim = 2, DelP = 55, DelE = 5, Tf = 50, n = Tf + DelP + 1;
-const double T = 0.001;
-int j, d, b;
+    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+                N, N, N, 1.0, A, N, B, N, 0.0, C, N);
 
-// Define initial values
-MatrixXd phf(2, 2), prf(2, 2), Qr(2, 2), Qh(2, 2), mA(2, 2), Brt_i, Bht_i, Brht_i, Art_i, Aht_i, crt_i, cht_i, Frt_i, Rr(1, 1), Rh(1, 1), Rrh(1, 1), Fht_i, Pr(2, 2), Ph(2, 2), a, br, bh, c;
-VectorXd ahf(2), arf(2), mBr(2), mBh(2), mC(2), Ur(1), Uh(1), ξ0(2), ξ(2), error(2), Uh_arr[DelE], ξ_arr[DelE], ar(2), ah(2);
-MatrixXd A(dim * n, dim), Br(dim * n, 1), Bh(dim * n, 1), C(dim * n, 1);
+    mkl_free(A);
+    mkl_free(B);
+    mkl_free(C);
 
-
-int main(){
-
-    A.setZero();
-    Br.setZero();
-    Bh.setZero();
-    C.setZero();
-
-    phf << 0, 0, 0, 0;
-    prf = phf;
-    Qr << 10, 0,
-     0, 0.1;
-    Qh << 20, 0,
-     0, 0.1;
-    mA << 0, 1, 
-    -0.1, -0.1;
-    ahf << 0, 0;
-    arf << 0, 0;
-    mBr << 0, 0.1;
-    mBh << 0, 0.1;
-    mC << 0, 0.1;
-    Ur << 0;
-    Uh << 0;
-    ξ0 << 0, 0;
-    ξ << 1, 1;
-    error << 0, 0;
-    Rr << 1;
-    Rh << 1;
-    Rrh << 1;
-    Pr = MatrixXd::Zero(dim, dim);
-    Ph = MatrixXd::Zero(dim, dim);
-
+    std::cout << "Matrix multiplication using MKL succeeded." << std::endl;
 
     return 0;
 }

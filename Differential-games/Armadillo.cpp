@@ -42,15 +42,15 @@ int main() {
   for(int i=0;i<Tf;i++){   j=2*i;b=(j+DelP*2)-1;
     Dg(A(arma::span(j, b), arma::span::all), Br(arma::span(j, b), arma::span::all), Bh(arma::span(j, b), arma::span::all), C(arma::span(j, b), arma::span::all));j=2*i;b=(j+DelP*2)-1;
 
-    // Updating Ur, Uh and ξ
-    Ur=-inv(Rr)*Br(arma::span(j, j+1), arma::span::all).t()*(Pr*ξ+ar);
-    Uh=-inv(Rh)*Bh(arma::span(j, j+1), arma::span::all).t()*(Ph*ξ+ah);
-    ξ+=T*(A(arma::span(j, j+1), arma::span::all)*ξ+Br(arma::span(j, j+1), arma::span::all)*Ur+Bh(arma::span(j, j+1), arma::span::all)*Uh+C(arma::span(j, j+1), arma::span::all));
+    // // Updating Ur, Uh and ξ
+    // Ur=-inv(Rr)*Br(arma::span(j, j+1), arma::span::all).t()*(Pr*ξ+ar);
+    // Uh=-inv(Rh)*Bh(arma::span(j, j+1), arma::span::all).t()*(Ph*ξ+ah);
+    // ξ+=T*(A(arma::span(j, j+1), arma::span::all)*ξ+Br(arma::span(j, j+1), arma::span::all)*Ur+Bh(arma::span(j, j+1), arma::span::all)*Uh+C(arma::span(j, j+1), arma::span::all));
 
-    // Store Uh and ξ in the array
-    Uh_arr[i % DelE] = Uh; 
-    ξ0=ξ_arr[i % DelE];
-    ξ_arr[i % DelE] = ξ;
+    // // Store Uh and ξ in the array
+    // Uh_arr[i % DelE] = Uh; 
+    // ξ0=ξ_arr[i % DelE];
+    // ξ_arr[i % DelE] = ξ;
 
     //if(i>DelE){           j-=DelE/2-2;
       //Estimation(A(arma::span(j, b), arma::span::all), Br(arma::span(j, b), arma::span::all), Bh(arma::span(j, b), arma::span::all), C(arma::span(j, b), arma::span::all), ξ0);
@@ -63,7 +63,7 @@ int main() {
   auto end = high_resolution_clock::now();
   
   
-  auto duration = duration_cast<microseconds>(end - start);
+  auto duration = duration_cast<microseconds>((end - start)/Tf);
   
     // Print 
   cout << "Pr:\n" << Pr << endl;
@@ -81,33 +81,6 @@ int main() {
   return 0;
 }
 
-void Define(){
-
-    phf = {{0, 0},
-           {0, 0}};
-    prf = phf;
-    Qr = {{10, 0},
-          {0, 0.1}};
-    Qh = {{20, 0},
-          {0, 0.1}};
-    mA = {{0, 1},
-          {-0.1, -0.1}};
-
-    ahf = {0, 0};
-    arf = {0, 0};
-    mBr = {0, 0.1};
-    mBh = {0, 0.1};
-    mC = {0, 0.1};
-    Ur = {0};
-    Uh = {0};
-    ξ0 = {0, 0};
-    ξ = {1, 1};
-    error = {0, 0};
-
-    Rr = {1};
-    Rh = {1};
-    Rrh = {1};
-}
 
 void Dg(mat dgA,mat dgBr,mat dgBh,mat dgC){
   // Initialize loop variables with actual values
@@ -142,6 +115,7 @@ void Dg(mat dgA,mat dgBr,mat dgBh,mat dgC){
 }
 
 void Estimation(mat eA,mat eBr,mat eBh ,mat eC, colvec ξo){
+
   ξ=ξo;
   error = {0};
   for(int i=0;i<DelE;i++){    j=2*i;b=(j+DelP*2)-1;
@@ -155,4 +129,32 @@ void Estimation(mat eA,mat eBr,mat eBh ,mat eC, colvec ξo){
   }
 
   cout<<error ;
+}
+
+void Define(){
+
+    phf = {{0, 0},
+           {0, 0}};
+    prf = phf;
+    Qr = {{10, 0},
+          {0, 0.1}};
+    Qh = {{20, 0},
+          {0, 0.1}};
+    mA = {{0, 1},
+          {-0.1, -0.1}};
+
+    ahf = {0, 0};
+    arf = {0, 0};
+    mBr = {0, 0.1};
+    mBh = {0, 0.1};
+    mC = {0, 0.1};
+    Ur = {0};
+    Uh = {0};
+    ξ0 = {0, 0};
+    ξ = {1, 1};
+    error = {0, 0};
+
+    Rr = {1};
+    Rh = {1};
+    Rrh = {1};
 }
