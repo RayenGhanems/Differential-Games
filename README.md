@@ -1,4 +1,4 @@
 # Differential-Games
  
-To run the code pleas install Armadillo and NLOPT libraries first<br>
-and run using this comand:<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;g++ -o out Armadillo.cpp -larmadillo -lblas -llapack <br> or<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;g++ -O3 -ffast-math -I /usr/local/include/eigen3 Eigen.cpp -o out
+To run the code pleas install Eigen and NLOPT libraries first<br>
+and run using this comand:<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;make clean_LQ && make run_LQ && ./LQ <br> or<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;make clean_DG && make run_DG && ./DG
