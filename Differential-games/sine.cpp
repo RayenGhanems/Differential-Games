@@ -14,17 +14,10 @@ void writeToCSV(const std::string &filename, const std::vector<float> &pos,const
         return;
     }
 
-    for (int i=0;i<10000;i++) {
-        if(i==0||i==10000-1){
-            file << pos[i]<<"/0/0|\n";
-        }
-        else {
-            if(i==1||i==10000-2){
-                file << pos[i]<<"/"<<vel[i-1]<<"/0|\n";
-            }
-            else {file << pos[i]<<"/"<<vel[i-1]<<"/"<<acc[i-2] << "|\n";}
-        }
-    }
+    for (int i=1;i<100000;i++) {
+        file << pos[i]<<"/"<<vel[i]<<"/"<<acc[i] << "|\n";}
+        
+    
 
     file.close();
 }
@@ -57,24 +50,20 @@ int main() {
 
         // Draw the sine function
         sf::VertexArray sine(sf::LinesStrip);
-        for (float t = 0; t <= 110; t += 0.01) {
-
-            float x = t*10; 
+        for (float t = 0; t <= 100; t += 0.001) {
+            
+            float x = t*100; 
             float y = std::sin(t); 
-            y = (y + 1) * 300;
-            sine.append(sf::Vertex(sf::Vector2f(x, y), sf::Color::Green));
+            float v = std::cos(t);
+            float a = -(y);
+            sine.append(sf::Vertex(sf::Vector2f(x, (y+initial_pos)*600/range), sf::Color::Green));
 
             // Store spline points for writing to CSV
-            if (write && x <= 1100) {
-                float pos=sinePoints.back();
-                sinePoints.push_back((y / 600) * range - initial_pos);
-                if(x>1&&x<1100){
-                    float vel=sineVelocity.back();
-                    sineVelocity.push_back((sinePoints.back()-pos)/T);
-                    if(x>2&&x<1100-1){
-                        sineAcceleration.push_back((sineVelocity.back()-vel)/T);
-                    }
-                }
+            if (write && x <= 100/0.001) {
+                sinePoints.push_back(y);
+                sineVelocity.push_back(v);
+                sineAcceleration.push_back(a);
+                
             }
             else{
                 if(done){

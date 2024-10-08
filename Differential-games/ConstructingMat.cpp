@@ -9,7 +9,7 @@
 using namespace std;
 using namespace Eigen;
 
-double I=0.0152,D=0.5,m=1,l=0.2,g=9.81;
+double I=0.0152,D=0.5,m=1,l=0.1,g=9.81;
 
 vector<string> split(const string &s, char delimiter) {
     vector<string> tokens;
@@ -35,16 +35,14 @@ void readCSV(const string &filename,MatrixXd& A,MatrixXd &B, MatrixXd& C) {
     mA << 0,1,
         0,-D/I;
     mC<<0,0;
-    cout<<"1";
     int i=0;
         while (getline(file, line, '|')) {
         vector<string> parts = split(line, '/');
         if (parts.size() == 3) {
-            cout<<"2";
-            mA(1, 0) = m * g * l * sin(stod(parts[0]));
-
+            mA(1, 0) = (m * g * l * sin(stod(parts[0])))/I;
             mC(1,0)=-(1/I)*(I*stod(parts[2])+D*stod(parts[1])+m*g*l*cos(stod(parts[0])));
 
+            if (i==100){ cout<< mA<<endl<<mC<<endl;}
             A.block(2*i, 0, 2, 2) = mA;
             B.block(2*i, 0, 2, 1) = mB;
             C.block(2*i, 0, 2, 1) = mC;
@@ -64,14 +62,14 @@ int main() {
     readCSV(filename, A, B, C);
 
     // Print the matrices
-    cout << "Matrix A:" << endl;
-    cout << A << endl;
+    // cout << "Matrix A:" << endl;
+     cout << A << endl;
 
-    cout << "Matrix B:" << endl;
-    cout << B << endl;
+    // cout << "Matrix B:" << endl;
+    // cout << B << endl;
 
-    cout << "Matrix C:" << endl;
-    cout << C << endl;
+    // cout << "Matrix C:" << endl;
+    // cout << C << endl;
 
     return 0;
 }

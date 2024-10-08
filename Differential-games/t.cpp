@@ -10,6 +10,7 @@ using namespace std;
 using namespace chrono;
 
 
+int t=0;
 
 void Plus(int& o){
     duration<double> pause_duration(0.6);
@@ -17,20 +18,20 @@ void Plus(int& o){
     cout<<"Plus: "<<++o<<endl;
 }
 
-void Min(int& o){
-    while(o<2){
+void Min(){
+    while(t<2){
     }
     while(1){
         duration<double> pause_duration(1);
         this_thread::sleep_for(pause_duration);
-        cout<<"Min : "<<o<<endl;
+        cout<<"Min : "<<t<<endl;
     }
 }
 
 int main(){
-    int t=0;
+    
     auto startt=high_resolution_clock::now();
-    std::thread t2(Min,ref(t));
+    std::thread t2(Min);
     while(t<5){
         Plus(t);
     }
